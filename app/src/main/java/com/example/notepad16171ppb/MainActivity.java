@@ -13,22 +13,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
-
+    EditText EditText1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Save("Note1.txt");
             }
         });
+
+        EditText1 = (EditText) findViewById(R.id.EditText1);
+        EditText1.setText(Open("Note1.txt"));
     }
 
     @Override
@@ -36,6 +38,45 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    public void Save(String fileName) {
+        try {
+            OutputStreamWriter out =
+                    new OutputStreamWriter(openFileOutput(fileName, 0));
+            out.write(EditText1.getText().toString());
+            out.close();
+            Toast.makeText(this, "Note saved!", Toast.LENGTH_SHORT).show();
+        } catch (Throwable t) {
+            Toast.makeText(this, "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public String Open(String fileName) {
+        String content = "";
+        if (FileExists(fileName)) {
+            try {
+                InputStream in = openFileInput(fileName);
+                if ( in != null) {
+                    InputStreamReader tmp = new InputStreamReader( in );
+                    BufferedReader reader = new BufferedReader(tmp);
+                    String str;
+                    StringBuilder buf = new StringBuilder();
+                    while ((str = reader.readLine()) != null) {
+                        buf.append(str + "\n");
+                    } in .close();
+                    content = buf.toString();
+                }
+            } catch (java.io.FileNotFoundException e) {} catch (Throwable t) {
+                Toast.makeText(this, "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+        return content;
+    }
+
+    public boolean FileExists(String fname) {
+        File file = getBaseContext().getFileStreamPath(fname);
+        return file.exists();
     }
 
     @Override
@@ -49,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
