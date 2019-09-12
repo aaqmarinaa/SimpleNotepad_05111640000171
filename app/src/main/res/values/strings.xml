@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">Notepad 16171 PPB</string>
+    <string name="app_name">Simple 16171 Notepad</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_note_select">NoteSelect</string>
 </resources>
